@@ -400,6 +400,7 @@ namespace Microsoft.AspNetCore.Mvc.Razor
             return builder.ToString();
         }
 
+        // internal for tests
         internal IEnumerable<string> GetViewLocationFormats(ViewLocationExpanderContext context)
         {
             if (!string.IsNullOrEmpty(context.AreaName) &&

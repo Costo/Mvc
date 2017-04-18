@@ -62,7 +62,8 @@ namespace Microsoft.AspNetCore.Mvc.Razor
         public string ControllerName { get; }
 
         /// <summary>
-        /// Gets the page name.
+        /// Gets the page name. This will be the value of the <c>page</c> route value when rendering a Page from the
+        /// Razor Pages framework. This value will be <c>null</c> if rendering a view as the result of a controller.
         /// </summary>
         public string PageName { get; }
 

@@ -29,7 +29,15 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
                     //      Imagine a path like /{1}/{0} - we might end up with //{0} if we don't do *something* with
                     //      the slashes. Instead of picking on (leading or trailing), we choose both. This seems
                     //      less arbitrary.
-
+                    //
+                    //
+                    // So given a Page like /Account/Manage/Index using /Pages as the root, and the default set of 
+                    // search paths, this will produce the expanded paths:
+                    //
+                    //  /Pages/Account/Manage/{0}.cshtml
+                    //  /Pages/Account/{0}.cshtml
+                    //  /Pages/{0}.cshtml
+                    //  /Views/Shared/{0}.cshtml
 
                     if (!location.Contains("/{1}/"))
                     {

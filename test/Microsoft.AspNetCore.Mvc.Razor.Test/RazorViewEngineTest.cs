@@ -37,6 +37,11 @@ namespace Microsoft.AspNetCore.Mvc.Razor.Test
             {"controller", "bar"},
         };
 
+        private static readonly Dictionary<string, object> _pageTestContext = new Dictionary<string, object>()
+        {
+            {"page", "/Accounts/Index"},
+        };
+
         public static IEnumerable<string[]> AbsoluteViewPathData
         {
             get
@@ -760,6 +765,43 @@ namespace Microsoft.AspNetCore.Mvc.Razor.Test
 
             // Act 1
             var result1 = viewEngine.FindView(context, "baz", isMainPage: true);
+
+            // Assert 1
+            Assert.True(result1.Success);
+            var view1 = Assert.IsType<RazorView>(result1.View);
+            Assert.Same(page, view1.RazorPage);
+            pageFactory.Verify();
+
+            // Act 2
+            pageFactory
+               .Setup(p => p.CreateFactory(It.IsAny<string>()))
+               .Throws(new Exception("Shouldn't be called"));
+
+            var result2 = viewEngine.FindView(context, "baz", isMainPage: true);
+
+            // Assert 2
+            Assert.True(result2.Success);
+            var view2 = Assert.IsType<RazorView>(result2.View);
+            Assert.Same(page, view2.RazorPage);
+            pageFactory.Verify();
+        }
+
+        [Fact]
+        public void FindView_CachesValuesIfViewWasFound_ForPages()
+        {
+            // Arrange
+            var page = Mock.Of<IRazorPage>();
+            var pageFactory = new Mock<IRazorPageFactoryProvider>();
+            pageFactory
+               .Setup(p => p.CreateFactory("/Views/Shared/baz.cshtml"))
+               .Returns(new RazorPageFactoryResult(() => page, new IChangeToken[0]))
+               .Verifiable();
+
+            var viewEngine = CreateViewEngine(pageFactory.Object);
+            var context = GetActionContext(_pageTestContext);
+
+            // Act 1
+            var result1 = viewEngine.FindView(context, "baz", isMainPage: false);
 
             // Assert 1
             Assert.True(result1.Success);
@@ -1684,7 +1726,7 @@ namespace Microsoft.AspNetCore.Mvc.Razor.Test
         }
 
         // This isn't a real case we expect to hit in an app, just making sure we have a reasonable default
-        // for a wierd configuration. In this case we preserve what we did in 1.0.0.
+        // for a weird configuration. In this case we preserve what we did in 1.0.0.
         [Fact]
         public void GetViewLocationFormats_NoRouteValues_ReturnsDefaultSet()
         {

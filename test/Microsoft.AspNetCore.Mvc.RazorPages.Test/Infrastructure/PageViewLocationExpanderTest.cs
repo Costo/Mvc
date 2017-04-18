@@ -20,7 +20,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
             // Arrange
             var context = CreateContext();
 
-            var expander = CreateViewLocationExpander();
+            var expander = new PageViewLocationExpander();
 
             // Act
             expander.PopulateValues(context);
@@ -39,7 +39,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
                 "/ignore-me",
             };
 
-            var expander = CreateViewLocationExpander();
+            var expander = new PageViewLocationExpander();
 
             // Act
             var actual = expander.ExpandViewLocations(context, locations);
@@ -58,7 +58,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
                 "/ignore-me",
             };
 
-            var expander = CreateViewLocationExpander();
+            var expander = new PageViewLocationExpander();
 
             // Act
             var actual = expander.ExpandViewLocations(context, locations);
@@ -83,7 +83,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
                 "/{1}/{0}.cshtml",
             };
 
-            var expander = CreateViewLocationExpander();
+            var expander = new PageViewLocationExpander();
 
             // Act
             var actual = expander.ExpandViewLocations(context, locations);
@@ -92,6 +92,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
             Assert.Equal(expected, actual.ToArray());
         }
 
+        [Fact]
         public void ExpandLocations_ExpandsDirectories_MultipleLocations()
         {
             // Arrange
@@ -113,7 +114,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
                 "/Views/Shared/{0}.cshtml",
             };
 
-            var expander = CreateViewLocationExpander();
+            var expander = new PageViewLocationExpander();
 
             // Act
             var actual = expander.ExpandViewLocations(context, locations);
@@ -134,11 +135,6 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
             {
                 Values = new Dictionary<string, string>(),
             };
-        }
-
-        private PageViewLocationExpander CreateViewLocationExpander()
-        {
-            return new PageViewLocationExpander();
         }
     }
 }
